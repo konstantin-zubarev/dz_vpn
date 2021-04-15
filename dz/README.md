@@ -2,8 +2,10 @@
 
 Цель: VPN
 1. Между двумя виртуалками поднять vpn в режимах
+
 - tun
 - tap
+
 Прочуствовать разницу.
 
 2. Поднять RAS на базе OpenVPN с клиентскими сертификатами, подключиться с локальной машины на виртуалку
@@ -14,33 +16,94 @@
 ![](topology.jpeg)
 
 Настройка сетевого интерфейса на `PC1` и `PC2`
-PC1:
 ```
+PC1:
+
 [root@pc1 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc1 ~]# echo GATEWAY=192.168.1.1 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+[root@pc1 ~]# echo GATEWAY=192.168.1.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+```
 ```
 PC2:
-```
-[root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc2 ~]# echo GATEWAY=192.168.2.1 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
-```
-Установим необзодимые пакеты на `server-ovpn` и `client-ovpn`:
 
+[root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
+[root@pc2 ~]# echo GATEWAY=192.168.2.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+```
+
+Установим пакеты на `server-ovpn` и `client-ovpn`:
 ```
 [root@server-ovpn ~]# yum install -y epel-release openvpn easy-rsa
 [root@client-ovpn ~]# yum install -y epel-release openvpn
 ```
-Включим forwarding пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
 
+Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
 ```
 [root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 [root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 ```
-На сервере `server-ovpn` сгенерируем секретный ключ:
+
+#### Сертификаты
+
+Настроим центр сертификации на базе Easy-RSA на `server-ovpn`, скопируем скрипты easy-rsa в каталог `/etc/openvpn/easy-rsa/`:
+
+
 ```
-[root@server-ovpn ~]# mkdir -p /etc/openvpn/keys
+[root@server-ovpn ~]# mkdir -p /etc/openvpn/easy-rsa
+[root@server-ovpn ~]# cp -r /usr/share/easy-rsa/3.0.8/* /etc/openvpn/easy-rsa
+```
+
+Создадим шаблон для создпния сертификата.
+```
+[root@server-ovpn ~]# cd /etc/openvpn/easy-rsa
+[root@server-ovpn easy-rsa]# vi vars
+
+export KEY_COUNTRY="RU"
+export KEY_PROVINCE="Tula"
+export KEY_CITY="Tula"
+export KEY_ORG="ORG"
+export KEY_EMAIL="admin@local.lab"
+export KEY_CN="LOCAL"
+export KEY_OU="LOCAL"
+export KEY_NAME="name-openvpn-server.local.lab"
+export KEY_ALTNAMES="name-openvpn-server"
+```
+Применим:
+```
+[root@server-ovpn easy-rsa]# . ./vars
+```
+
+Инициализируем PKI:
+```
+[root@server-ovpn easy-rsa]# ./easyrsa init-pki
+```
+
+Генерируем корневой сертификат, создаем удостоверяющий центр CA:
+```
+[root@server-ovpn easy-rsa]# ./easyrsa build-ca
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Сгенерируем секретный ключ:
+```
 [root@server-ovpn ~]# openvpn --genkey --secret /etc/openvpn/keys/ta.key
 ```
+
 Сгенерирующий секретный ключ скопируем на сервер `client-ovpn` в созданный каталог `keys`.
 
 Создадим конфигурационный файл (tap режим) на сервере `server-ovpn`:
