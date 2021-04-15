@@ -1,0 +1,30 @@
+---
+# tasks file for roles/ovpn
+
+- name: Install iperf3
+  yum:
+    name: iperf3
+    state: present
+
+- name: Set DEFROUTE=No
+  lineinfile:
+    path: /etc/sysconfig/network-scripts/ifcfg-eth0
+    regexp: '^DEFROUTE='
+    line: DEFROUTE="no"
+  notify:
+    - restart network
+    
+- name: GATEWAY
+  lineinfile:
+    dest: /etc/sysconfig/network-scripts/ifcfg-eth1
+    insertafter: 'NETMASK'
+    regexp: '^GATEWAY='
+    line: 'GATEWAY=192.168.2.1'
+    state: present
+  notify:
+    - restart network
+    
+- name: restart network
+  systemd:
+    name: network
+    state: restarted

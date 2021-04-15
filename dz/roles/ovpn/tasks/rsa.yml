@@ -1,0 +1,22 @@
+---
+# tasks file for roles/ovpn
+
+- name: сreate directory
+  file:
+    path: /etc/openvpn/easy-rsa
+    state: directory
+  notify: copy easy-rsa
+
+- name: Copy vars
+  copy:
+    src: vars
+    dest: /etc/openvpn/easy-rsa/vars
+  notify: copy init-pki
+    
+- name: Copy server.conf
+  copy:
+    src: server.conf
+    dest: /etc/openvpn/
+  notify: copy key
+    - copy key
+    - restart openvpn@server

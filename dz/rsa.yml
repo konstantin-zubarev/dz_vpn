@@ -1,0 +1,44 @@
+---
+
+- name: RSA
+  hosts: server-ovpn
+  become: true
+  tasks:
+    - name: сreate directory
+      file:
+        path: /etc/openvpn/easy-rsa
+        state: directory
+
+    - name: Copy vars
+      copy:
+        src: ./roles/ovpn/files/vars
+        dest: /etc/openvpn/easy-rsa/vars
+      notify: copy easy-rsa
+      
+    - name: Copy server.conf
+      copy:
+        src: ./roles/ovpn/files/server.conf
+        dest: /etc/openvpn/server.conf
+      notify: 
+        - copy init-pki
+        - copy key
+        - copy gen-crl
+        - restart openvpn@server
+   
+  handlers:
+    - name: copy easy-rsa
+      shell: cp -rf /vagrant/easy-rsa/* /etc/openvpn/easy-rsa/
+   
+    - name: copy init-pki
+      shell: cd /etc/openvpn/ && ./easy-rsa/easyrsa init-pki && echo yes | cp -rf /vagrant/pki/* /etc/openvpn/pki/
+     
+    - name: copy key
+      shell: cp /etc/openvpn/pki/ca.crt /etc/openvpn/keys && cp /etc/openvpn/pki/issued/vpnserver.crt /etc/openvpn/keys && cp /etc/openvpn/pki/private/vpnserver.key /etc/openvpn/keys && cp /etc/openvpn/pki/dh.pem /etc/openvpn/keys
+      
+    - name: copy gen-crl
+      shell: cd /etc/openvpn/ && ./easy-rsa/easyrsa gen-crl
+       
+    - name: restart openvpn@server
+      systemd:
+        name: openvpn@server
+        state: restarted

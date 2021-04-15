@@ -1,0 +1,16 @@
+---
+# handlers file for roles/ovpn
+
+- name: save iptables
+  shell: iptables-save > /etc/sysconfig/iptables
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted
+    
+- name: start openvpn@server
+  systemd:
+    name: openvpn@server
+    state: started
+    enabled: yes

@@ -1,0 +1,53 @@
+---
+# tasks file for roles/ovpn
+
+- name: Set ip forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    reload: yes
+
+- name: Install packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - epel-release
+    - openvpn
+    - easy-rsa
+
+- name: сreate directory
+  file:
+    path: /etc/openvpn/keys
+    state: directory
+
+- name: Copy tls
+  copy:
+    src: ta.key
+    dest: /etc/openvpn/keys/ta.key
+    mode: '600'
+  notify: start openvpn@server
+    
+- name: Copy server-ovpn from template
+  template:
+    src: server-ovpn.j2
+    dest: /etc/openvpn/server.conf
+  notify: start openvpn@server
+    
+- name: Create iptables NAT chain
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    out_interface: 'eth0'
+    jump: MASQUERADE
+    protocol: 'all'
+    state: present
+  notify: save iptables
+
+- name: Auto start iptables NAT
+  lineinfile:
+    path: /etc/rc.d/rc.local
+    regexp: '^/sbin/iptables-restore'
+    line: /sbin/iptables-restore < /etc/sysconfig/iptables
+    mode: '+x'
