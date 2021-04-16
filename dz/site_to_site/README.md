@@ -120,6 +120,8 @@ verb 3
 ```
 
 Тестирование показало, что режим `tun` лучше по сравнению с `tap`. Так же есть разниза между ними, `tap` ведет себя как полноценный сетевой адапптер.
+-[Разнеца меду TUN & TAP](https://ru.wikipedia.org/wiki/TUN/TAP)
+
 
 Проверка задания
 ----------------
@@ -129,7 +131,3 @@ verb 3
 
 Ссылка на дополнительную информацию
 - [Как настроить openvpn на CentOS](https://serveradmin.ru/nastroyka-openvpn-na-centos/)
-
-https://www.dmosk.ru/instruktions.php?object=openvpn-ubuntu-install
-
-https://howitmake.ru/blog/ubuntu/192.html
