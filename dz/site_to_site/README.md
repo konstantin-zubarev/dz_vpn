@@ -9,14 +9,15 @@
 PC1:
 
 [root@pc1 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc1 ~]# echo GATEWAY=192.168.1.1 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+[root@pc1 ~]# echo GATEWAY=192.168.1.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
 ```
 ```
 PC2:
 
 [root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc2 ~]# echo GATEWAY=192.168.2.1 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+[root@pc2 ~]# echo GATEWAY=192.168.2.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
 ```
+
 Установим пакеты на `server-ovpn` и `client-ovpn`:
 
 ```
@@ -29,8 +30,9 @@ PC2:
 [root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 [root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 ```
+### Server-ovpn
 
-На сервере `server-ovpn` сгенерируем секретный ключ:
+Сгенерируем секретный ключ:
 ```
 [root@server-ovpn ~]# mkdir -p /etc/openvpn/keys
 [root@server-ovpn ~]# openvpn --genkey --secret /etc/openvpn/keys/ta.key
@@ -46,7 +48,7 @@ dev tap
 ifconfig 10.10.1.1 255.255.255.0
 topology subnet
 route 192.168.2.0 255.255.255.0 10.10.1.2
-secret /etc/openvpn/keys/ovpn.key
+secret /etc/openvpn/keys/ta.key
 compress lzo
 status /var/log/openvpn-status.log
 log /var/log/openvpn.log
