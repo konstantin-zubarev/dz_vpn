@@ -1,1 +1,0 @@
-{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"/home/kostya/my_project/31_vpn/dz/site_to_site","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}
