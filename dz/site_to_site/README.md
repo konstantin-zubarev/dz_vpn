@@ -4,6 +4,12 @@
 
 ### Реализация.
 
+Установим пакеты
+```
+[root@pc1 ~]# yum install -y iperf3
+[root@pc2 ~]# yum install -y iperf3
+```
+
 Настройка сетевого интерфейса на `PC1` и `PC2`
 ```
 PC1:
@@ -19,17 +25,17 @@ PC2:
 ```
 
 Установим пакеты на `server-ovpn` и `client-ovpn`:
-
 ```
 [root@server-ovpn ~]# yum install -y epel-release openvpn easy-rsa
 [root@client-ovpn ~]# yum install -y epel-release openvpn
 ```
-Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
 
+Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
 ```
 [root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 [root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 ```
+
 ### Server-ovpn
 
 Сгенерируем секретный ключ:
@@ -44,7 +50,7 @@ PC2:
 ```
 [root@server-ovpn ~]# vi /etc/openvpn/server.conf
 
-dev tap
+dev tun
 ifconfig 10.10.1.1 255.255.255.0
 topology subnet
 route 192.168.2.0 255.255.255.0 10.10.1.2
@@ -71,12 +77,12 @@ verb 3
 ```
 [root@client-ovpn ~]# vi /etc/openvpn/server.conf
 
-dev tap
+dev tun
 remote 172.20.1.10
 ifconfig 10.10.1.2 255.255.255.0
 topology subnet
 route 192.168.1.0 255.255.255.0 10.10.1.1
-secret /etc/openvpn/keys/ovpn.key
+secret /etc/openvpn/keys/ta.key
 compress lzo
 status /var/log/openvpn-status.log
 log /var/log/openvpn.log
@@ -97,19 +103,20 @@ verb 3
 На машине `PC1` запустим утилиту `iperf3` в режиме сервер, а на `PC2` в режиме клиент:
 ```
 [root@pc1 ~]# iperf3 -s
-[root@pc2 ~]# iperf3 -c 192.168.1.2 -t 10 -i 5 -b 1000M -u
+[root@pc2 ~]# iperf3 -c 192.168.1.20 -t 10 -i 5 -b 1000M -u
 ```
+
 Результат тестирования показал:
 ```
 [ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
-[  4]   0.00-10.00  sec   496 MBytes   416 Mbits/sec  0.191 ms  345574/393431 (88%)
+[  4]   0.00-10.00  sec   512 MBytes   429 Mbits/sec  0.233 ms  338531/393839 (86%)
 ```
 
-Изменим в конфигах /etc/openvpn/server.conf на сервере и клиенте режим с tap на tun.
+Изменим в конфигах /etc/openvpn/server.conf на сервере и клиенте режим с tun на tap.
 Сново протестируем.
 ```
 [ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
-[  4]   0.00-10.00  sec   512 MBytes   429 Mbits/sec  0.233 ms  338531/393839 (86%)
+[  4]   0.00-10.00  sec   496 MBytes   416 Mbits/sec  0.191 ms  345574/393431 (88%)
 ```
 
 Тестирование показало, что режим `tun` лучше по сравнению с `tap`. Так же есть разниза между ними, `tap` ведет себя как полноценный сетевой адапптер.
@@ -118,7 +125,6 @@ verb 3
 ----------------
 
 1. Выполнить `vagrant up`, и автоматически поднимает Server и Client с установленным VPN соединением (через tun).
-
 
 
 Ссылка на дополнительную информацию
