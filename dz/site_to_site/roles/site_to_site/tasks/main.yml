@@ -1,2 +1,22 @@
 ---
 # tasks file for roles/site_to_site
+
+- name: Set timezone to Europe/Moscow
+  timezone:
+    name: Europe/Moscow
+
+- name: Server OpenVPN
+  include_tasks: server_ovpn.yml
+  when: (ansible_hostname == 'server-ovpn')
+
+- name: Client OpenVPN
+  include_tasks: client_ovpn.yml
+  when: (ansible_hostname == 'client-ovpn')
+
+- name: Install package
+  include_tasks: clien_pc1.yml
+  when: (ansible_hostname == 'pc1')
+
+- name: Install package
+  include_tasks: clien_pc2.yml
+  when: (ansible_hostname == 'pc2')

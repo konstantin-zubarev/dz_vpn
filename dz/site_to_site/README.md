@@ -4,38 +4,6 @@
 
 ### Реализация.
 
-Установим пакеты
-```
-[root@pc1 ~]# yum install -y iperf3
-[root@pc2 ~]# yum install -y iperf3
-```
-
-Настройка сетевого интерфейса на `PC1` и `PC2`
-```
-PC1:
-
-[root@pc1 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc1 ~]# echo GATEWAY=192.168.1.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
-```
-```
-PC2:
-
-[root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc2 ~]# echo GATEWAY=192.168.2.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
-```
-
-Установим пакеты на `server-ovpn` и `client-ovpn`:
-```
-[root@server-ovpn ~]# yum install -y epel-release openvpn easy-rsa
-[root@client-ovpn ~]# yum install -y epel-release openvpn
-```
-
-Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
-```
-[root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
-[root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
-```
-
 ### Server-ovpn
 
 Сгенерируем секретный ключ:
@@ -99,6 +67,42 @@ verb 3
 [root@client-ovpn ~]# systemctl status openvpn@server
 ```
 
+### PC1 PC2
+
+Установим пакеты
+```
+[root@pc1 ~]# yum install -y iperf3
+[root@pc2 ~]# yum install -y iperf3
+```
+
+Настройка сетевого интерфейса на `PC1` и `PC2`
+```
+PC1:
+
+[root@pc1 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
+[root@pc1 ~]# echo GATEWAY=192.168.1.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+```
+```
+PC2:
+
+[root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
+[root@pc2 ~]# echo GATEWAY=192.168.2.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
+```
+
+Установим пакеты на `server-ovpn` и `client-ovpn`:
+```
+[root@server-ovpn ~]# yum install -y epel-release openvpn easy-rsa
+[root@client-ovpn ~]# yum install -y epel-release openvpn
+```
+
+Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
+```
+[root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+[root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+```
+
+### Тестируем канал
+
 Протестируем созданный канал с помощью инструмента `iperf3`:
 На машине `PC1` запустим утилиту `iperf3` в режиме сервер, а на `PC2` в режиме клиент:
 ```
@@ -109,7 +113,7 @@ verb 3
 Результат тестирования показал:
 ```
 [ ID] Interval           Transfer     Bandwidth       Jitter    Lost/Total Datagrams
-[  4]   0.00-10.00  sec   512 MBytes   429 Mbits/sec  0.233 ms  338531/393839 (86%)
+[  4]   0.00-10.00  sec   551 MBytes   462 Mbits/sec  0.208 ms  386026/427024 (90%)
 ```
 
 Изменим в конфигах /etc/openvpn/server.conf на сервере и клиенте режим с tun на tap.
