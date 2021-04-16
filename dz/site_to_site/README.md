@@ -65,6 +65,8 @@ verb 3
 [root@server-ovpn ~]# systemctl status openvpn@server
 ```
 
+### Client-ovpn
+
 Создадим конфигурационный файл (tap режим) на сервере `client-ovpn`:
 ```
 [root@client-ovpn ~]# vi /etc/openvpn/server.conf
