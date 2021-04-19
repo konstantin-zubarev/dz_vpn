@@ -8,33 +8,53 @@
     sysctl_set: yes
     reload: yes
 
-- name: Install packages
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install packages OpenVPN
   package:
     name: "{{ item }}"
     state: present
   with_items:
-    - epel-release
     - openvpn
     - easy-rsa
 
-- name: сreate directory
-  file:
-    path: /etc/openvpn/keys
-    state: directory
-
-- name: Copy tls
+- name: Copy Certificates
   copy:
-    src: ta.key
-    dest: /etc/openvpn/keys/ta.key
-    mode: '600'
-  notify: start openvpn@server
-    
+    src: keys/{{ item }}
+    dest: /etc/openvpn/server/keys/
+    mode: 0600
+  with_items:
+    ['ca.crt','ta.key','dh.pem','vpnserver.crt','vpnserver.key']
+
+- name: 'Copy Certificates'
+  copy:
+    src: keys/crl.pem
+    dest: /etc/openvpn/server/keys
+    mode: 0777 
+
+- name: Create logs
+  file:
+    path: /var/log/openvpn
+    state: directory 
+
 - name: Copy server-ovpn from template
   template:
     src: server-ovpn.j2
-    dest: /etc/openvpn/server.conf
-  notify: start openvpn@server
-    
+    dest: /etc/openvpn/server/
+#  notify: start openvpn@server
+
+
+
+
+
+
+
+
+
+  
 - name: Create iptables NAT chain
   iptables:
     table: nat

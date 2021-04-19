@@ -5,13 +5,24 @@
   timezone:
     name: Europe/Moscow
 
+- name: Configuration OVPN Server
+  include_tasks: server-ovpn.yml
+
+
+
+
+
+
+
+
+
+
+
 - name: Configuration PC1
   include_tasks: pc1.yml
   when: ansible_hostname == "pc1"
   
-- name: Configuration OVPN Server
-  include_tasks: server-ovpn.yml
-  when: ansible_hostname == "server-ovpn"
+
   
 - name: Configuration OVPN Client
   include_tasks: client-ovpn.yml

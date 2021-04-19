@@ -126,22 +126,22 @@ dev tun
 
 ca /etc/openvpn/server/keys/ca.crt
 
-cert /etc/openvpn/server/keys/vpnserver.crt
-key /etc/openvpn/server/keys/vpnserver.key
+cert keys/vpnserver.crt
+key keys/vpnserver.key
 
-dh /etc/openvpn/server/keys/dh.pem
+dh keys/dh.pem
 
-crl-verify /etc/openvpn/server/keys/crl.pem
+crl-verify keys/crl.pem
 
-tls-auth /etc/openvpn/server/keys/ta.key 0
+tls-auth keys/ta.key 0
 
 cipher AES-256-CBC
 
 server 10.10.1.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
 push "route 192.168.1.0 255.255.255.0"
-push "dhcp-option DNS 172.16.10.1"
-push "dhcp-option DOMAIN example.org"
+#push "dhcp-option DNS 172.20.1.10"
+#push "dhcp-option DOMAIN example.org"
 
 client-to-client
 
@@ -167,7 +167,7 @@ daemon
 [root@server-ovpn ~]# systemctl enable --now openvpn-server@server
 ```
 
-Проверим статус сервиса `openvpn@server`:
+Проверим статус сервиса `openvpn-server@server`:
 ```
 [root@server-ovpn ~]# systemctl status openvpn-server@server
 ```
@@ -202,7 +202,7 @@ client
 proto udp
 dev tun0
 
-remote 192.168.10.10 1194
+remote 172.20.1.10 1194
 
 cipher AES-256-CBC
 
@@ -331,7 +331,3 @@ e475f7fffb93c79d5bb396a6c9714395
 
 Ссылка на дополнительную информацию
 - [Как настроить openvpn на CentOS](https://serveradmin.ru/nastroyka-openvpn-na-centos/)
-
-https://www.dmosk.ru/instruktions.php?object=openvpn-ubuntu-install
-
-https://howitmake.ru/blog/ubuntu/192.html
