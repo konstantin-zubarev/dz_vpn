@@ -9,7 +9,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define "pc1" do |pc1|
-    pc1.vm.network "private_network", ip: "192.168.1.20", virtualbox__intnet: "lan"
+    pc1.vm.network "private_network", ip: "192.168.11.20", virtualbox__intnet: "lan"
     pc1.vm.hostname = "pc1"
     pc1.vm.provider "virtualbox" do |v|
       v.name = "pc1"
@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
   end
   
   config.vm.define "pc2" do |pc2|
-    pc2.vm.network "private_network", ip: "192.168.1.21", virtualbox__intnet: "lan"
+    pc2.vm.network "private_network", ip: "192.168.11.21", virtualbox__intnet: "lan"
     pc2.vm.hostname = "pc2"
     pc2.vm.provider "virtualbox" do |v|
       v.name = "pc2"
@@ -25,7 +25,7 @@ Vagrant.configure(2) do |config|
   end
 
   config.vm.define "server-ovpn" do |server|
-    server.vm.network "private_network", ip: "192.168.1.10", virtualbox__intnet: "lan"
+    server.vm.network "private_network", ip: "192.168.11.10", virtualbox__intnet: "lan"
     server.vm.network "private_network", ip: "172.20.1.10"
     server.vm.hostname = "server-ovpn"
     server.vm.provider "virtualbox" do |v|

@@ -43,8 +43,8 @@
 - name: Copy server-ovpn from template
   template:
     src: server-ovpn.j2
-    dest: /etc/openvpn/server/
-#  notify: start openvpn@server
+    dest: /etc/openvpn/server/server.conf
+  notify: start openvpn-server@server
 
 
 

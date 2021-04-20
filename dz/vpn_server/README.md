@@ -75,7 +75,11 @@ export EASYRSA_CERT_EXPIRE=3650
 Подпишим сертификат (vpnserver) для сервира:
 ```
 [root@server-ovpn easy-rsa]# ./easyrsa sign-req server vpnserver
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm request details: yes
 ```
+Подтверим правильность `yes`
 
 Сгенерируем список отозвонных сертивикатов:
 ```
@@ -91,28 +95,27 @@ export EASYRSA_CERT_EXPIRE=3650
 
 Создадим каталог для хранение сертификатов полученных от CA:
 ```
-[root@server-ovpn ~]# mkdir -p /etc/openvpn/server/keys
-```
-
-Создадим каталог для логов:
-```
-[root@server-ovpn ~]# mkdir -p /var/log/openvpn
+[root@server-ovpn easy-rsa]# mkdir -p /etc/openvpn/server/keys
 ```
 
 Создадим каталог для индивидуальных настроек, клиентов OpenVPN сервера:
 ```
-[root@server-ovpn ~]# mkdir -p /etc/openvpn/server/ccd
+[root@server-ovpn easy-rsa]# mkdir -p /etc/openvpn/server/ccd
 ```
 
+Создадим каталог для логов:
+```
+[root@server-ovpn easy-rsa]# mkdir -p /var/log/openvpn
+```
 
 Копируем нужные файлы в каталог `keys`
 ```
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/issued/vpnserver.crt /etc/openvpn/server/keys/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/private/vpnserver.key /etc/openvpn/server/keys/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/dh.pem /etc/openvpn/server/keys/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/ca.crt /etc/openvpn/server/keys/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/ta.key /etc/openvpn/server/keys/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/crl.pem /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/issued/vpnserver.crt /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/private/vpnserver.key /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/dh.pem /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/ca.crt /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/ta.key /etc/openvpn/server/keys/
+[root@server-ovpn easy-rsa]# cp pki/crl.pem /etc/openvpn/server/keys/
 ```
 
 Создадим конфигурационный файл сервера:
@@ -176,6 +179,7 @@ daemon
 
 Генирируем сертификат (vpnuser) для пользователя:
 ```
+[root@server-ovpn ~]# cd /etc/openvpn/easy-rsa/
 [root@server-ovpn easy-rsa]# ./easyrsa gen-req vpnuser nopass
 ```
 
