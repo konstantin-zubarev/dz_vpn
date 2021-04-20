@@ -142,7 +142,7 @@ cipher AES-256-CBC
 
 server 10.10.1.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
-push "route 192.168.1.0 255.255.255.0"
+push "route 192.168.11.0 255.255.255.0"
 #push "dhcp-option DNS 172.20.1.10"
 #push "dhcp-option DOMAIN example.org"
 
