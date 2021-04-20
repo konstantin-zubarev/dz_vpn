@@ -120,22 +120,18 @@ Type the word 'yes' to continue, or any other input to abort.
 
 Создадим конфигурационный файл сервера:
 ```
-[root@server-ovpn ~]# vi /etc/openvpn/server/server.conf
+[root@server-ovpn easy-rsa]# vi /etc/openvpn/server/server.conf
 
 # OpenVPN Server Config
 port 1194
 proto udp
 dev tun
 
-ca /etc/openvpn/server/keys/ca.crt
-
+ca keys/ca.crt
 cert keys/vpnserver.crt
 key keys/vpnserver.key
-
 dh keys/dh.pem
-
 crl-verify keys/crl.pem
-
 tls-auth keys/ta.key 0
 
 cipher AES-256-CBC
@@ -167,32 +163,35 @@ daemon
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@server-ovpn ~]# systemctl enable --now openvpn-server@server
+[root@server-ovpn easy-rsa]# systemctl enable --now openvpn-server@server
 ```
 
 Проверим статус сервиса `openvpn-server@server`:
 ```
-[root@server-ovpn ~]# systemctl status openvpn-server@server
+[root@server-ovpn easy-rsa]# systemctl status openvpn-server@server
 ```
 
 #### Создадим пользователя для OpenVPN
 
 Генирируем сертификат (vpnuser) для пользователя:
 ```
-[root@server-ovpn ~]# cd /etc/openvpn/easy-rsa/
 [root@server-ovpn easy-rsa]# ./easyrsa gen-req vpnuser nopass
 ```
 
 Подпишим сертификат (vpnuser) для пользователя:
 ```
 [root@server-ovpn easy-rsa]# ./easyrsa sign-req client vpnuser
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm request details: yes
 ```
+Подтверим правильность `yes`
 
 Скопируем сертификат пользователя в папку `client`.
 
 ```
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/issued/vpnuser.crt /etc/openvpn/client/
-[root@server-ovpn ~]# cp /etc/openvpn/easy-rsa/pki/private/vpnuser.key /etc/openvpn/client/
+[root@server-ovpn easy-rsa]# cp pki/issued/vpnuser.crt /etc/openvpn/client/
+[root@server-ovpn easy-rsa]# cp pki/private/vpnuser.key /etc/openvpn/client/
 ```
 
 Создадим конфигурационный файл клиента:
