@@ -204,11 +204,44 @@ Type the word 'yes' to continue, or any other input to abort.
 Скопируем нужные сертификаты (`ca.crt`,`vpnclient.crt`,`vpnclient.key`,`ta.key`) с `vpn-server` сервера на `vpn-client` клиент сервер.
 
 Создадим конфигурационный файл клиент сервера:
-
+```
 [root@vpn-client easy-rsa]# vi /etc/openvpn/client/server.conf
 
+#
+# OpenVPN Client Config
+#
 
+client
+proto udp
+dev tun
 
+remote 172.20.1.10 1194
+
+ca ca.crt
+cert vpnclient.crt
+key vpnclient.key
+tls-auth ta.key 1
+
+cipher AES-256-CBC
+
+tls-client
+remote-cert-tls server
+
+auth-nocache
+
+keepalive 10 120
+comp-lzo
+
+persist-key
+persist-tun
+
+resolv-retry infinite
+
+nobind
+
+verb 0
+mute 20
+```
 
 
 
