@@ -6,32 +6,9 @@
     name: Europe/Moscow
 
 - name: Configuration OVPN Server
-  include_tasks: server-ovpn.yml
+  include_tasks: vpn-server.yml
+  when: ansible_hostname == "vpn-server"
 
-
-
-
-
-
-
-
-
-
-
-- name: Configuration PC1
-  include_tasks: pc1.yml
-  when: ansible_hostname == "pc1"
-  
-
-  
 - name: Configuration OVPN Client
-  include_tasks: client-ovpn.yml
-  when: ansible_hostname == "client-ovpn"
-  
-- name: Configuration PC2
-  include_tasks: pc2.yml
-  when: ansible_hostname == "pc2"
-  
-#- name: Configuration RSA
-#  include_tasks: rsa.yml
-#  when: ansible_hostname == "server-ovpn1"
+  include_tasks: vpn-client.yml
+  when: ansible_hostname == "vpn-client"

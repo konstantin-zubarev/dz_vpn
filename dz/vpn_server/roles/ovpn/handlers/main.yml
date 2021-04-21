@@ -6,3 +6,9 @@
     name: openvpn-server@server
     state: started
     enabled: yes
+
+- name: start openvpn-client@server
+  systemd:
+    name: openvpn-client@server
+    state: started
+    enabled: yes

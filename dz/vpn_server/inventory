@@ -1,6 +1,4 @@
 [ovpn]
-pc1 ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/pc1/virtualbox/private_key
+vpn-server ansible_host=127.0.0.1 ansible_port=2222 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/vpn-server/virtualbox/private_key
 
-pc2 ansible_host=127.0.0.1 ansible_port=2200 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/pc2/virtualbox/private_key
-
-server-ovpn ansible_host=127.0.0.1 ansible_port=2201 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/server-ovpn/virtualbox/private_key
+vpn-client ansible_host=127.0.0.1 ansible_port=2200 ansible_user=vagrant ansible_ssh_private_key_file=./.vagrant/machines/vpn-client/virtualbox/private_key

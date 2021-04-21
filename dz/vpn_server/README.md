@@ -4,31 +4,31 @@
 
 ### Реализация.
 
-### Server-ovpn
+### OpenVPN server
 
 Установим пакеты
 ```
-[root@server-ovpn ~]# yum install -y epel-release
-[root@server-ovpn ~]# yum install -y openvpn easy-rsa
+[root@vpn-server ~]# yum install -y epel-release
+[root@vpn-server ~]# yum install -y openvpn easy-rsa
 ```
 
 Включим forwarding, пересылка пакетов между интерфейсами
 ```
-[root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+[root@vpn-server ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
 ```
 
 #### Сертификаты
 
 Настроим центр сертификации на базе Easy-RSA на `server-ovpn`, скопируем скрипты easy-rsa в каталог `/etc/openvpn/easy-rsa/`:
 ```
-[root@server-ovpn ~]# mkdir -p /etc/openvpn/easy-rsa
-[root@server-ovpn ~]# cp -r /usr/share/easy-rsa/3.0.8/* /etc/openvpn/easy-rsa
+[root@vpn-server ~]# mkdir -p /etc/openvpn/easy-rsa
+[root@vpn-server ~]# cp -r /usr/share/easy-rsa/3.0.8/* /etc/openvpn/easy-rsa
 ```
 
 Создадим шаблон для создпния сертификата.
 ```
-[root@server-ovpn ~]# cd /etc/openvpn/easy-rsa
-[root@server-ovpn easy-rsa]# vi vars
+[root@vpn-server ~]# cd /etc/openvpn/easy-rsa
+[root@vpn-server easy-rsa]# vi vars
 
 export KEY_COUNTRY="RU"
 export KEY_PROVINCE="Tula"
@@ -44,37 +44,37 @@ export EASYRSA_CERT_EXPIRE=3650
 
 Применим:
 ```
-[root@server-ovpn easy-rsa]# . ./vars
+[root@vpn-server easy-rsa]# . ./vars
 ```
 
 Инициализируем PKI:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa init-pki
+[root@vpn-server easy-rsa]# ./easyrsa init-pki
 ```
 
 Генерируем корневой сертификат, создаем удостоверяющий центр CA:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa build-ca nopass
+[root@vpn-server easy-rsa]# ./easyrsa build-ca nopass
 ```
 
 Создаем ключ Диффи-Хеллмана:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa gen-dh
+[root@vpn-server easy-rsa]# ./easyrsa gen-dh
 ```
 
 Сгенерируем секретный ключ:
 ```
-[root@server-ovpn easy-rsa]# openvpn --genkey --secret pki/ta.key
+[root@vpn-server easy-rsa]# openvpn --genkey --secret /etc/openvpn/server/ta.key
 ```
 
 Генирируем сертификат (vpnserver) для сервера:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa gen-req vpnserver nopass
+[root@vpn-server easy-rsa]# ./easyrsa gen-req vpnserver nopass
 ```
 
 Подпишим сертификат (vpnserver) для сервира:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa sign-req server vpnserver
+[root@vpn-server easy-rsa]# ./easyrsa sign-req server vpnserver
 
 Type the word 'yes' to continue, or any other input to abort.
   Confirm request details: yes
@@ -83,67 +83,56 @@ Type the word 'yes' to continue, or any other input to abort.
 
 Сгенерируем список отозвонных сертивикатов:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa gen-crl
+[root@vpn-server easy-rsa]# ./easyrsa gen-crl
 ```
 
 Заблокировать выданный сертификат (для примера user):
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa revoke user
+[root@vpn-server easy-rsa]# ./easyrsa revoke user
 ```
 
 #### Настройки OpenVPN
 
-Создадим каталог для хранение сертификатов полученных от CA:
+Создадим каталог для индивидуальных настроек и  логов:
 ```
-[root@server-ovpn easy-rsa]# mkdir -p /etc/openvpn/server/keys
-```
-
-Создадим каталог для индивидуальных настроек, клиентов OpenVPN сервера:
-```
-[root@server-ovpn easy-rsa]# mkdir -p /etc/openvpn/server/ccd
+[root@vpn-server easy-rsa]# mkdir -p /etc/openvpn/server/ccd && mkdir -p /var/log/openvpn
 ```
 
-Создадим каталог для логов:
+Копируем все неоюходимые для работы openvpn сервера файлы:
 ```
-[root@server-ovpn easy-rsa]# mkdir -p /var/log/openvpn
-```
-
-Копируем нужные файлы в каталог `keys`
-```
-[root@server-ovpn easy-rsa]# cp pki/issued/vpnserver.crt /etc/openvpn/server/keys/
-[root@server-ovpn easy-rsa]# cp pki/private/vpnserver.key /etc/openvpn/server/keys/
-[root@server-ovpn easy-rsa]# cp pki/dh.pem /etc/openvpn/server/keys/
-[root@server-ovpn easy-rsa]# cp pki/ca.crt /etc/openvpn/server/keys/
-[root@server-ovpn easy-rsa]# cp pki/ta.key /etc/openvpn/server/keys/
-[root@server-ovpn easy-rsa]# cp pki/crl.pem /etc/openvpn/server/keys/
+[root@vpn-server easy-rsa]# cp pki/issued/vpnserver.crt /etc/openvpn/server/
+[root@vpn-server easy-rsa]# cp pki/private/vpnserver.key /etc/openvpn/server/
+[root@vpn-server easy-rsa]# cp pki/dh.pem /etc/openvpn/server/
+[root@vpn-server easy-rsa]# cp pki/ca.crt /etc/openvpn/server/
+[root@vpn-server easy-rsa]# cp pki/crl.pem /etc/openvpn/server/
 ```
 
 Создадим конфигурационный файл сервера:
 ```
-[root@server-ovpn easy-rsa]# vi /etc/openvpn/server/server.conf
+[root@vpn-server easy-rsa]# vi /etc/openvpn/server/server.conf
 
+#
 # OpenVPN Server Config
+#
+
 port 1194
 proto udp
 dev tun
 
-ca keys/ca.crt
-cert keys/vpnserver.crt
-key keys/vpnserver.key
-dh keys/dh.pem
-crl-verify keys/crl.pem
-tls-auth keys/ta.key 0
+ca ca.crt
+cert vpnserver.crt
+key vpnserver.key
+dh dh.pem
+crl-verify crl.pem
+tls-auth ta.key 0
 
 cipher AES-256-CBC
 
 server 10.10.1.0 255.255.255.0
 ifconfig-pool-persist ipp.txt
-push "route 192.168.11.0 255.255.255.0"
-#push "dhcp-option DNS 172.20.1.10"
-#push "dhcp-option DOMAIN example.org"
+push "route 192.168.1.0 255.255.255.0"
 
 client-to-client
-
 client-config-dir ccd
 
 keepalive 10 120
@@ -163,36 +152,66 @@ daemon
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@server-ovpn easy-rsa]# systemctl enable --now openvpn-server@server
+[root@vpn-server easy-rsa]# systemctl enable --now openvpn-server@server
 ```
 
 Проверим статус сервиса `openvpn-server@server`:
 ```
-[root@server-ovpn easy-rsa]# systemctl status openvpn-server@server
+[root@vpn-server easy-rsa]# systemctl status openvpn-server@server
 ```
 
 #### Создадим пользователя для OpenVPN
 
-Генирируем сертификат (vpnuser) для пользователя:
+Генирируем сертификаты (vpnuser, vpnclien) для пользователя:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa gen-req vpnuser nopass
+[root@vpn-server easy-rsa]# ./easyrsa gen-req vpnuser nopass
+```
+```
+[root@vpn-server easy-rsa]# ./easyrsa gen-req vpnclient nopass
 ```
 
-Подпишим сертификат (vpnuser) для пользователя:
+Подпишим сертификаты (vpnuser, vpnclien) для пользователя:
 ```
-[root@server-ovpn easy-rsa]# ./easyrsa sign-req client vpnuser
+[root@vpn-server easy-rsa]# ./easyrsa sign-req client vpnuser
 
 Type the word 'yes' to continue, or any other input to abort.
   Confirm request details: yes
 ```
+```
+[root@vpn-server easy-rsa]# ./easyrsa sign-req client vpnclient
+
+Type the word 'yes' to continue, or any other input to abort.
+  Confirm request details: yes
+```
+
 Подтверим правильность `yes`
 
-Скопируем сертификат пользователя в папку `client`.
+### OpenVPN client
 
+Установим пакеты
 ```
-[root@server-ovpn easy-rsa]# cp pki/issued/vpnuser.crt /etc/openvpn/client/
-[root@server-ovpn easy-rsa]# cp pki/private/vpnuser.key /etc/openvpn/client/
+[root@vpn-client ~]# yum install -y epel-release
+[root@vpn-client ~]# yum install -y openvpn
 ```
+
+Включим forwarding, пересылка пакетов между интерфейсами
+```
+[root@vpn-client ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+```
+
+#### Сертификаты
+
+Скопируем нужные сертификаты (`ca.crt`,`vpnclient.crt`,`vpnclient.key`,`ta.key`) с `vpn-server` сервера на `vpn-client` клиент сервер.
+
+Создадим конфигурационный файл клиент сервера:
+
+[root@vpn-client easy-rsa]# vi /etc/openvpn/client/server.conf
+
+
+
+
+
+
 
 Создадим конфигурационный файл клиента:
 
@@ -203,7 +222,7 @@ Type the word 'yes' to continue, or any other input to abort.
 # OpenVPN Client Config
 client
 proto udp
-dev tun0
+dev tun
 
 remote 172.20.1.10 1194
 

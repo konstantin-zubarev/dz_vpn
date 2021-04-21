@@ -1,0 +1,87 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            05:6d:5e:ad:81:f3:17:7c:19:d6:25:ed:07:4d:f1:c3
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=Easy-RSA CA
+        Validity
+            Not Before: Apr 20 15:56:08 2021 GMT
+            Not After : Apr 18 15:56:08 2031 GMT
+        Subject: CN=vpnserver
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:f7:21:60:76:fa:56:d3:fb:e1:11:eb:c0:91:86:
+                    8f:23:bd:09:de:df:51:d5:81:f0:79:01:5b:cc:a7:
+                    00:7c:30:06:41:76:c8:f8:68:fe:c9:b2:79:4c:18:
+                    08:b7:0d:b3:43:07:e7:5a:1f:86:1e:b8:a7:df:1e:
+                    17:d3:c3:16:d1:34:8e:c4:3f:58:70:7d:c3:5a:85:
+                    6e:90:53:4d:61:dd:6a:59:77:d5:65:2a:dd:f7:b1:
+                    ba:8f:2f:ac:03:23:e0:58:02:78:31:ac:a8:a7:79:
+                    a5:f7:ca:a0:f6:9b:b1:d8:9f:f0:3c:0c:75:b7:61:
+                    6e:89:9f:82:c9:c5:3c:9d:da:49:3f:4d:f0:1d:e3:
+                    2a:09:8c:74:fe:ae:9b:2a:78:71:17:f6:a6:5a:d3:
+                    98:cb:b5:17:e3:7a:09:c4:d6:fa:ae:c4:15:c4:36:
+                    8a:f0:79:6f:50:e3:c7:41:66:25:03:2c:e8:cc:7b:
+                    fb:68:3d:32:20:2d:5f:f9:a8:9d:ea:bf:70:36:20:
+                    cb:23:73:26:ea:72:11:c3:e8:b9:3a:c2:6a:65:f3:
+                    08:eb:9c:e0:2b:bc:41:ab:2d:d1:6d:08:ed:38:a7:
+                    8b:52:58:55:69:2b:b1:ce:23:63:5f:e5:d6:0e:1e:
+                    09:e6:6a:a7:a7:fc:f0:45:9e:d5:83:ef:8d:c0:99:
+                    96:57
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                0D:22:85:67:C3:CE:17:EA:8C:3E:FA:11:A3:41:C5:8B:E6:1D:EB:09
+            X509v3 Authority Key Identifier: 
+                keyid:D5:E8:66:CD:4E:14:8B:E5:29:95:18:8F:5C:93:6C:39:4C:4A:F7:5B
+                DirName:/CN=Easy-RSA CA
+                serial:D8:B4:3E:50:0F:23:9D:0A
+
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+            X509v3 Subject Alternative Name: 
+                DNS:vpnserver
+    Signature Algorithm: sha256WithRSAEncryption
+         49:d2:31:fc:b5:0f:d7:85:ab:a5:7d:9b:fe:4c:ea:77:14:8d:
+         8f:d6:4d:ee:c8:23:4b:43:20:87:af:6d:a3:5c:31:9c:2a:0a:
+         8d:6d:cc:9f:04:73:ec:d4:05:72:8c:8e:34:f7:97:38:10:b8:
+         d4:4e:30:9b:84:47:06:bb:99:01:11:b1:8c:48:5b:bb:be:8e:
+         18:e2:b9:e0:56:ad:88:c7:a7:56:4f:9d:9a:56:c6:5f:b8:ee:
+         18:b8:62:fe:68:12:3d:4f:f7:50:ce:fd:12:90:dd:51:81:11:
+         bc:d0:19:c8:1c:76:e1:ab:ad:d3:82:f8:34:18:46:3e:82:ba:
+         ba:30:62:9c:8c:ef:64:f3:f8:9c:87:91:9f:1d:f8:cc:0e:b8:
+         3d:0f:95:31:14:df:f9:e2:b2:b2:7c:8a:5e:84:f1:08:37:64:
+         f3:ce:fe:1e:9e:1b:f2:27:59:82:df:46:15:18:c7:ba:db:b1:
+         17:78:a2:13:f4:0a:5c:ae:18:97:2a:5e:b7:6b:c2:80:59:6b:
+         fd:52:aa:12:94:7f:55:05:95:44:6a:54:2e:3b:46:cb:1c:31:
+         00:89:74:b8:2b:3d:b2:c0:75:16:58:23:02:4d:c3:e2:e3:54:
+         71:bd:95:2a:c7:54:9a:5d:96:d1:e3:21:20:cf:37:f9:2b:1c:
+         04:04:a0:5c
+-----BEGIN CERTIFICATE-----
+MIIDYjCCAkqgAwIBAgIQBW1erYHzF3wZ1iXtB03xwzANBgkqhkiG9w0BAQsFADAW
+MRQwEgYDVQQDDAtFYXN5LVJTQSBDQTAeFw0yMTA0MjAxNTU2MDhaFw0zMTA0MTgx
+NTU2MDhaMBQxEjAQBgNVBAMMCXZwbnNlcnZlcjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAPchYHb6VtP74RHrwJGGjyO9Cd7fUdWB8HkBW8ynAHwwBkF2
+yPho/smyeUwYCLcNs0MH51ofhh64p98eF9PDFtE0jsQ/WHB9w1qFbpBTTWHdall3
+1WUq3fexuo8vrAMj4FgCeDGsqKd5pffKoPabsdif8DwMdbdhbomfgsnFPJ3aST9N
+8B3jKgmMdP6umyp4cRf2plrTmMu1F+N6CcTW+q7EFcQ2ivB5b1Djx0FmJQMs6Mx7
++2g9MiAtX/moneq/cDYgyyNzJupyEcPouTrCamXzCOuc4Cu8Qast0W0I7Tini1JY
+VWkrsc4jY1/l1g4eCeZqp6f88EWe1YPvjcCZllcCAwEAAaOBrTCBqjAJBgNVHRME
+AjAAMB0GA1UdDgQWBBQNIoVnw84X6ow++hGjQcWL5h3rCTBGBgNVHSMEPzA9gBTV
+6GbNThSL5SmVGI9ck2w5TEr3W6EapBgwFjEUMBIGA1UEAwwLRWFzeS1SU0EgQ0GC
+CQDYtD5QDyOdCjATBgNVHSUEDDAKBggrBgEFBQcDATALBgNVHQ8EBAMCBaAwFAYD
+VR0RBA0wC4IJdnBuc2VydmVyMA0GCSqGSIb3DQEBCwUAA4IBAQBJ0jH8tQ/Xhaul
+fZv+TOp3FI2P1k3uyCNLQyCHr22jXDGcKgqNbcyfBHPs1AVyjI4095c4ELjUTjCb
+hEcGu5kBEbGMSFu7vo4Y4rngVq2Ix6dWT52aVsZfuO4YuGL+aBI9T/dQzv0SkN1R
+gRG80BnIHHbhq63Tgvg0GEY+grq6MGKcjO9k8/ich5GfHfjMDrg9D5UxFN/54rKy
+fIpehPEIN2Tzzv4enhvyJ1mC30YVGMe627EXeKIT9ApcrhiXKl63a8KAWWv9UqoS
+lH9VBZVEalQuO0bLHDEAiXS4Kz2ywHUWWCMCTcPi41RxvZUqx1SaXZbR4yEgzzf5
+KxwEBKBc
+-----END CERTIFICATE-----
