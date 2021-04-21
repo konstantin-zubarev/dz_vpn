@@ -78,7 +78,7 @@ verb 3
 
 Создадим конфигурационный файл (tap режим) на клиент сервере `vpn-client`:
 ```
-[root@client-ovpn ~]# vi /etc/openvpn/client/server.conf
+[root@vpn-client ~]# vi /etc/openvpn/client/server.conf
 
 #
 # OpenVPN Client Config
@@ -104,12 +104,12 @@ verb 3
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@client-ovpn ~]# systemctl enable --now openvpn-client@server
+[root@vpn-client ~]# systemctl enable --now openvpn-client@server
 ```
 
 Проверим статус сервиса `openvpn-client@server`:
 ```
-[root@client-ovpn ~]# systemctl status openvpn-client@server
+[root@vpn-client ~]# systemctl status openvpn-client@server
 ```
 
 ### Тестируем канал

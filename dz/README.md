@@ -16,6 +16,6 @@
 Решения.
 --------
 
-1. [Site to site](site_to_site)
+1. [Между двумя виртуалками поднять vpn](site_to_site)
 
-2. [OpenVPN Server](vpn_server)
+2. [Поднять RAS на базе OpenVPN](vpn_server)
