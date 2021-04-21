@@ -244,5 +244,10 @@ mute 20
 [root@vpn-client easy-rsa]# systemctl status openvpn-client@server
 ```
 
+Проверка задания
+----------------
+
+1. Выполнить `vagrant up`, и автоматически поднимет RAS на базе OpenVPN.
+
 Ссылка на дополнительную информацию
 - [Как настроить openvpn на CentOS](https://serveradmin.ru/nastroyka-openvpn-na-centos/)

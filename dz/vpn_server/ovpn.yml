@@ -1,7 +1,7 @@
 ---
 
 - name: Configuration networs
-  hosts: ovpn
+  hosts: all
   become: true
   roles:
     - ovpn

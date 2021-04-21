@@ -12,3 +12,8 @@
     name: openvpn-client@server
     state: started
     enabled: yes
+
+- name: restart network
+  systemd:
+    name: network
+    state: restarted

@@ -1,13 +1,6 @@
 ---
 # tasks file for roles/ovpn
 
-- name: Set ip forwarding
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    sysctl_set: yes
-    reload: yes
-
 - name: Install epel-release
   yum:
     name: epel-release

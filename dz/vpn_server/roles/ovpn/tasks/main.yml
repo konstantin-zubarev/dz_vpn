@@ -12,3 +12,7 @@
 - name: Configuration OVPN Client
   include_tasks: vpn-client.yml
   when: ansible_hostname == "vpn-client"
+
+- name: Configuration OVPN Client
+  include_tasks: clien_pc.yml
+  when: ansible_hostname == "pc1" or ansible_hostname == "pc2"
