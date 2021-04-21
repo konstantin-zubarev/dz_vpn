@@ -4,46 +4,77 @@
 
 ### Реализация.
 
-### Server-ovpn
+### OpenVPN server
+
+Установим пакеты
+```
+[root@vpn-server ~]# yum install -y epel-release
+[root@vpn-server ~]# yum install -y openvpn
+```
+
+Включим forwarding, пересылка пакетов между интерфейсами
+```
+[root@vpn-server ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+```
 
 Сгенерируем секретный ключ:
 ```
-[root@server-ovpn ~]# mkdir -p /etc/openvpn/keys
-[root@server-ovpn ~]# openvpn --genkey --secret /etc/openvpn/keys/ta.key
+[root@vpn-server ~]# openvpn --genkey --secret /etc/openvpn/server/ta.key
 ```
 
-Сгенерирующий секретный ключ скопируем на сервер `client-ovpn` в созданный каталог `keys`.
+Сгенерирующий секретный ключ скопируем на клиент сервер `vpn-client` в каталог `/etc/openvpn/client`.
 
-Создадим конфигурационный файл (tap режим) на сервере `server-ovpn`:
+Создадим каталог для логов:
 ```
-[root@server-ovpn ~]# vi /etc/openvpn/server.conf
+[root@vpn-server ~]# mkdir -p /var/log/openvpn
+```
+
+Создадим конфигурационный файл (tap режим) на сервере `vpn-server`:
+```
+[root@server-ovpn ~]# vi /etc/openvpn/server/server.conf
 
 dev tun
+
+secret ta.key
+
 ifconfig 10.10.1.1 255.255.255.0
-topology subnet
 route 192.168.2.0 255.255.255.0 10.10.1.2
-secret /etc/openvpn/keys/ta.key
+
+topology subnet
+
 compress lzo
+
 status /var/log/openvpn-status.log
-log /var/log/openvpn.log
+log /var/log/openvpn/openvpn.log
 verb 3
 ```
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@server-ovpn ~]# systemctl enable --now openvpn@server
+[root@vpn-server ~]# systemctl enable --now openvpn-server@server
 ```
 
-Проверим статус сервиса `openvpn@server`:
+Проверим статус сервиса `openvpn-server@server`:
 ```
-[root@server-ovpn ~]# systemctl status openvpn@server
+[root@vpn-server ~]# systemctl status openvpn-server@server
 ```
 
-### Client-ovpn
+### OpenVPN client
 
-Создадим конфигурационный файл (tap режим) на сервере `client-ovpn`:
+Установим пакеты
 ```
-[root@client-ovpn ~]# vi /etc/openvpn/server.conf
+[root@vpn-client ~]# yum install -y epel-release
+[root@vpn-client ~]# yum install -y openvpn
+```
+
+Включим forwarding, пересылка пакетов между интерфейсами
+```
+[root@vpn-client ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+```
+
+Создадим конфигурационный файл (tap режим) на клиент сервере `vpn-client`:
+```
+[root@client-ovpn ~]# vi /etc/openvpn/client/server.conf
 
 dev tun
 remote 172.20.1.10
@@ -59,46 +90,12 @@ verb 3
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@client-ovpn ~]# systemctl enable --now openvpn@server
+[root@vpn-client easy-rsa]# systemctl enable --now openvpn-client@server
 ```
 
-Проверим статус сервиса `openvpn@server`:
+Проверим статус сервиса `openvpn-client@server`:
 ```
-[root@client-ovpn ~]# systemctl status openvpn@server
-```
-
-### PC1 PC2
-
-Установим пакеты
-```
-[root@pc1 ~]# yum install -y iperf3
-[root@pc2 ~]# yum install -y iperf3
-```
-
-Настройка сетевого интерфейса на `PC1` и `PC2`
-```
-PC1:
-
-[root@pc1 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc1 ~]# echo GATEWAY=192.168.1.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
-```
-```
-PC2:
-
-[root@pc2 ~]# echo DEFROUTE="no" >> /etc/sysconfig/network-scripts/ifcfg-eth0 && systemctl restart network
-[root@pc2 ~]# echo GATEWAY=192.168.2.10 >> /etc/sysconfig/network-scripts/ifcfg-eth1 && systemctl restart network
-```
-
-Установим пакеты на `server-ovpn` и `client-ovpn`:
-```
-[root@server-ovpn ~]# yum install -y epel-release openvpn easy-rsa
-[root@client-ovpn ~]# yum install -y epel-release openvpn
-```
-
-Включим forwarding, пересылка пакетов между интерфейсами на `server-ovpn` и `client-ovpn`:
-```
-[root@server-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
-[root@client-ovpn ~]# echo net.ipv4.ip_forward = 1 >> /etc/sysctl.conf | sysctl -p
+[root@vpn-client easy-rsa]# systemctl status openvpn-client@server
 ```
 
 ### Тестируем канал
@@ -133,6 +130,7 @@ PC2:
 
 1. Выполнить `vagrant up`, и автоматически поднимает Server и Client с установленным VPN соединением (через tun).
 
+2. Для установления VPN соединения (через tap), выполнить `ansible-pla`
 
 Ссылка на дополнительную информацию
 - [Как настроить openvpn на CentOS](https://serveradmin.ru/nastroyka-openvpn-na-centos/)
