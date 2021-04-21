@@ -1,0 +1,38 @@
+---
+# tasks file for roles/site_to_site
+
+- name: Set ip forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    reload: yes
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install packages OpenVPN
+  package:
+    name: openvpn
+    state: present
+    
+- name: Copy Certificates
+  copy:
+    src: keys/ta.key
+    dest: /etc/openvpn/server/
+    owner: root
+    group: root
+    mode: 0600
+ 
+- name: Create logs
+  file:
+    path: /var/log/openvpn
+    state: directory 
+
+- name: Copy server.conf from template
+  template:
+    src: server.j2
+    dest: /etc/openvpn/server/server.conf
+  notify: start openvpn-server@server

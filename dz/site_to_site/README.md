@@ -33,6 +33,10 @@
 ```
 [root@server-ovpn ~]# vi /etc/openvpn/server/server.conf
 
+#
+# OpenVPN Server Config
+#
+
 dev tun
 
 secret ta.key
@@ -76,13 +80,23 @@ verb 3
 ```
 [root@client-ovpn ~]# vi /etc/openvpn/client/server.conf
 
+#
+# OpenVPN Client Config
+#
+
 dev tun
+
+secret ta.key
+
 remote 172.20.1.10
+
 ifconfig 10.10.1.2 255.255.255.0
-topology subnet
 route 192.168.1.0 255.255.255.0 10.10.1.1
-secret /etc/openvpn/keys/ta.key
+
+topology subnet
+
 compress lzo
+
 status /var/log/openvpn-status.log
 log /var/log/openvpn.log
 verb 3
@@ -90,12 +104,12 @@ verb 3
 
 Запускаем сервис и добавляем в автозагрузку:
 ```
-[root@vpn-client easy-rsa]# systemctl enable --now openvpn-client@server
+[root@client-ovpn ~]# systemctl enable --now openvpn-client@server
 ```
 
 Проверим статус сервиса `openvpn-client@server`:
 ```
-[root@vpn-client easy-rsa]# systemctl status openvpn-client@server
+[root@client-ovpn ~]# systemctl status openvpn-client@server
 ```
 
 ### Тестируем канал
@@ -130,7 +144,7 @@ verb 3
 
 1. Выполнить `vagrant up`, и автоматически поднимает Server и Client с установленным VPN соединением (через tun).
 
-2. Для установления VPN соединения (через tap), выполнить `ansible-pla`
+2. Для установления VPN соединения (через tap), выполнить `ansible-playbook vpn-tap.yml`
 
 Ссылка на дополнительную информацию
 - [Как настроить openvpn на CentOS](https://serveradmin.ru/nastroyka-openvpn-na-centos/)

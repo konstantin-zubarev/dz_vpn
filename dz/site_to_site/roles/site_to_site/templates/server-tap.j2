@@ -1,0 +1,18 @@
+#
+# OpenVPN Server Config
+#
+
+dev tap
+
+secret ta.key
+
+ifconfig 10.10.2.1 255.255.255.0
+route 192.168.2.0 255.255.255.0 10.10.2.2
+
+topology subnet
+
+compress lzo
+
+status /var/log/openvpn-status.log
+log /var/log/openvpn/openvpn.log
+verb 3

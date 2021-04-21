@@ -1,13 +1,19 @@
 ---
 # handlers file for roles/site_to_site
 
+- name: start openvpn-server@server
+  systemd:
+    name: openvpn-server@server
+    state: started
+    enabled: yes
+
+- name: start openvpn-client@server
+  systemd:
+    name: openvpn-client@server
+    state: started
+    enabled: yes
+
 - name: restart network
   systemd:
     name: network
     state: restarted
-
-- name: start openvpn@server
-  systemd:
-    name: openvpn@server
-    state: started
-    enabled: yes

@@ -1,0 +1,20 @@
+#
+# OpenVPN Client Config
+#
+
+dev tap
+
+secret ta.key
+
+remote 172.20.1.10
+
+ifconfig 10.10.2.2 255.255.255.0
+route 192.168.1.0 255.255.255.0 10.10.2.1
+
+topology subnet
+
+compress lzo
+
+status /var/log/openvpn-status.log
+log /var/log/openvpn.log
+verb 3

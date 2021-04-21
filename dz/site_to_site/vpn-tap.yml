@@ -1,0 +1,39 @@
+---
+
+- name: OpenVPN (tap)
+  hosts: vpn-server
+  become: true
+
+  tasks:
+
+    - name: Copy server.conf from template
+      template:
+        src: roles/site_to_site/templates/server-tap.j2
+        dest: /etc/openvpn/server/server.conf
+      notify: restart openvpn-server@server
+
+  handlers:
+
+    - name: restart openvpn-server@server
+      service:
+        name: openvpn-server@server
+        state: restarted
+
+- name: OpenVPN (tap)
+  hosts: vpn-client
+  become: true
+
+  tasks:
+
+    - name: Copy server.conf from template
+      template:
+        src: roles/site_to_site/templates/client-tap.j2
+        dest: /etc/openvpn/client/server.conf
+      notify: restart openvpn-client@server
+
+  handlers:
+
+    - name: restart openvpn-client@server
+      service:
+        name: openvpn-client@server
+        state: restarted

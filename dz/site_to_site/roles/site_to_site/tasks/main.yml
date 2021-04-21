@@ -6,12 +6,12 @@
     name: Europe/Moscow
 
 - name: Server OpenVPN
-  include_tasks: server_ovpn.yml
-  when: (ansible_hostname == 'server-ovpn')
+  include_tasks: vpn-server.yml
+  when: (ansible_hostname == 'vpn-server')
 
 - name: Client OpenVPN
-  include_tasks: client_ovpn.yml
-  when: (ansible_hostname == 'client-ovpn')
+  include_tasks: vpn-client.yml
+  when: (ansible_hostname == 'vpn-client')
 
 - name: Install package
   include_tasks: clien_pc1.yml
