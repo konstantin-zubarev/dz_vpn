@@ -1,0 +1,48 @@
+---
+# tasks file for roles/ovpn
+
+- name: Set ip forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: yes
+    reload: yes
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install packages OpenVPN
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - openvpn
+    - easy-rsa
+
+- name: Copy Certificates
+  copy:
+    src: keys/{{ item }}
+    dest: /etc/openvpn/server/
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    ['ca.crt','vpnserver.crt','vpnserver.key','dh.pem','crl.pem','ta.key']
+
+- name: Create ccd
+  file:
+    path: /etc/openvpn/server/ccd
+    state: directory
+
+- name: Create logs
+  file:
+    path: /var/log/openvpn
+    state: directory 
+
+- name: Copy server.conf from template
+  template:
+    src: server.j2
+    dest: /etc/openvpn/server/server.conf
+  notify: start openvpn-server@server

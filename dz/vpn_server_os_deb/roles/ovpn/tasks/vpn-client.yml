@@ -1,0 +1,28 @@
+---
+# tasks file for roles/ovpn
+
+- name: Install epel-release
+  yum:
+    name: epel-release
+    state: present
+
+- name: Install packages OpenVPN
+  package:
+    name: openvpn
+    state: present
+
+- name: Copy Certificates
+  copy:
+    src: keys/{{ item }}
+    dest: /etc/openvpn/client/
+    owner: root
+    group: root
+    mode: 0600
+  with_items:
+    ['ca.crt','vpnclient.crt','vpnclient.key','ta.key']
+
+- name: Copy server.conf from template
+  template:
+    src: client.j2
+    dest: /etc/openvpn/client/server.conf
+  notify: start openvpn-client@server

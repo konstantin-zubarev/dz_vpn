@@ -1,0 +1,39 @@
+#
+# OpenVPN Server Config
+#
+
+port 1194
+proto udp
+dev tun
+
+ca ca.crt
+cert vpnserver.crt
+key vpnserver.key
+dh dh.pem
+crl-verify crl.pem
+tls-auth ta.key 0
+
+cipher AES-256-CBC
+
+server 10.10.1.0 255.255.255.0
+ifconfig-pool-persist ipp.txt
+push "route 192.168.1.0 255.255.255.0"
+#push "dhcp-option DNS 172.20.1.10"
+#push "dhcp-option DOMAIN example.org"
+
+client-to-client
+client-config-dir ccd
+
+keepalive 10 120
+comp-lzo
+max-clients 10
+
+persist-key
+persist-tun
+
+status /var/log/openvpn/openvpn-status.log
+log /var/log/openvpn.log
+verb 3
+
+mode server
+daemon
